@@ -1,6 +1,7 @@
 import sys
 import sqlite3
 import smtplib
+import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -401,8 +402,8 @@ class InfoWindow(QWidget):
 
         self.name = res[1]  # название фильма
         self.data = res[2]  # дата и время проката
-
-        fout = open(f'poster{id}.jpg', 'wb')
+        self.save_img = f'poster{id}.jpg'
+        fout = open(self.save_img, 'wb')
 
         fout.write(res[6])  # вытаскиваю изображение из базы данных
         self.poster.setScaledContents(True)  # размер изображения == размеру poster
@@ -420,6 +421,9 @@ class InfoWindow(QWidget):
         self.bilets.get_id(self.id_need, self.name, self.data)
         self.bilets.start_loading()
         self.bilets.setWindowTitle(self.name)
+
+    def closeEvent(self, event):
+        os.remove(self.save_img)
 
 
 class Main(QMainWindow, Ui_tickets_inter):
